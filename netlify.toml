@@ -1,15 +1,25 @@
 [build]
   publish = "."
+  functions = "netlify/functions"
 
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Route everything to index.html (single page app)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+```
+
+The key addition is `functions = "netlify/functions"` — this explicitly tells Netlify where to find them.
+
+---
+
+**2. Check the function file is in the right place in GitHub**
+
+In your repo, confirm the file path looks exactly like this:
+```
+netlify/functions/polish.js
