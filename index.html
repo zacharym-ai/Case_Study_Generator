@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zoek Case Study Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  --bg: #1a1a2e;
+  --panel: #1f1b3a;
+  --panel-light: #252145;
+  --accent: #6c63ff;
+  --accent-blue: #00a8ff;
+  --gradient: linear-gradient(135deg, #6c63ff 0%, #00a8ff 100%);
+  --green: #4fffb0;
+  --red: #ff5c7c;
+  --yellow: #ffd166;
+  --white: #ffffff;
+  --muted: #a0a0c0;
+  --border: rgba(108,99,255,0.2);
+  --border-hover: rgba(108,99,255,0.5);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== SCREEN ONLY STYLES ===== */
+@media screen {
+
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 300px;
+  min-width: 300px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-logo img, .sidebar-logo svg {
+  height: 32px;
+  width: auto;
+}
+
+.sidebar-nav {
+  padding: 20px 0;
+  flex: 1;
+}
+
+.sidebar-section-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 24px 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 2px solid transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background: rgba(108,99,255,0.08);
+  color: var(--white);
+}
+
+.nav-item.active {
+  background: rgba(108,99,255,0.12);
+  border-left-color: var(--accent);
+  color: var(--white);
+}
+
+.nav-item .nav-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--accent);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  letter-spacing: 0.05em;
+}
+
+.sidebar-bottom {
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.ai-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(108,99,255,0.1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ai-badge .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--green);
+  flex-shrink: 0;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Top bar */
+.topbar {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--gradient);
+  color: white;
+}
+
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.btn-outline:hover {
+  border-color: var(--accent);
+  color: var(--white);
+}
+
+.btn-ghost {
+  background: rgba(108,99,255,0.1);
+  color: var(--accent);
+  border: 1px solid rgba(108,99,255,0.2);
+}
+
+.btn-ghost:hover {
+  background: rgba(108,99,255,0.2);
+}
+
+.btn-danger {
+  background: rgba(255,92,124,0.1);
+  color: var(--red);
+  border: 1px solid rgba(255,92,124,0.2);
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* Form area */
+.form-area {
+  padding: 32px;
+  max-width: 1000px;
+}
+
+/* Tabs */
+.template-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  background: var(--panel);
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.template-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s;
+  color: var(--muted);
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+}
+
+.template-tab.active {
+  background: var(--gradient);
+  color: white;
+}
+
+.template-tab:not(.active):hover {
+  color: var(--white);
+  background: rgba(108,99,255,0.1);
+}
+
+/* Form sections */
+.form-section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.section-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--gradient);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.section-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-grid-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.span-2 { grid-column: span 2; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.form-input, .form-textarea, .form-select {
+  background: var(--panel-light);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--white);
+  transition: all 0.2s;
+  outline: none;
+  width: 100%;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.form-select option {
+  background: var(--panel);
+}
+
+/* Metrics */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.metric-card {
+  background: var(--panel-light);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metric-card-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.metric-card-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Keyword table */
+.kw-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kw-table thead th {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0 10px 10px 0;
+  text-align: left;
+}
+
+.kw-table tbody td {
+  padding: 6px 8px 6px 0;
+}
+
+.kw-table tbody td input {
+  width: 100%;
+}
+
+.kw-table .rank-input {
+  width: 70px;
+}
+
+.kw-table .change-select {
+  width: 90px;
+}
+
+.add-row-btn {
+  margin-top: 10px;
+}
+
+/* Bullet inputs */
+.bullet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bullet-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bullet-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bullet-indicator.before { background: var(--red); }
+.bullet-indicator.after { background: var(--green); }
+
+.ai-assist-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(108,99,255,0.08);
+  border: 1px dashed rgba(108,99,255,0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  font-family: var(--font-body);
+  margin-top: 8px;
+}
+
+.ai-assist-btn:hover {
+  background: rgba(108,99,255,0.15);
+  border-color: var(--accent);
+}
+
+.ai-loading {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.ai-loading.visible { display: flex; }
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(108,99,255,0.3);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Drafts panel */
+.drafts-panel {
+  display: none;
+  padding: 32px;
+  max-width: 800px;
+}
+
+.drafts-panel.active { display: block; }
+
+.draft-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color 0.2s;
+}
+
+.draft-card:hover { border-color: var(--border-hover); }
+
+.draft-info h4 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.draft-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.draft-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-drafts {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.empty-drafts .empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+/* Form panel visibility */
+.form-panel { display: none; }
+.form-panel.active { display: block; }
+
+/* ===== PREVIEW PANEL ===== */
+.preview-outer {
+  display: none; /* hidden by default */
+}
+
+.preview-outer.visible {
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 520px;
+  overflow-y: auto;
+  background: #f0eff8;
+  z-index: 100;
+  box-shadow: -8px 0 40px rgba(0,0,0,0.4);
+}
+
+.preview-close-btn {
+  position: fixed;
+  top: 16px;
+  right: 536px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--white);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 101;
+  font-family: var(--font-body);
+}
+
+} /* end @media screen */
+
+/* ===== CASE STUDY OUTPUT ===== */
+/* This is the actual case study design — matches Zoek PDFs */
+
+.cs-page {
+  width: 100%;
+  background: #1a1a2e;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #ffffff;
+  page-break-after: always;
+}
+
+/* Page 1: Header + Metrics */
+.cs-page-1 {}
+
+.cs-header {
+  background: linear-gradient(135deg, #1f1b3a 0%, #2a1f52 100%);
+  padding: 36px 40px 30px;
+  border-bottom: 2px solid rgba(108,99,255,0.3);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.cs-header-left {}
+
+.cs-logo {
+  height: 28px;
+  width: auto;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.cs-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #6c63ff, #00a8ff);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.cs-headline {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  max-width: 460px;
+}
+
+.cs-headline em {
+  background: linear-gradient(135deg, #6c63ff, #00a8ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-style: normal;
+}
+
+.cs-header-right {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(108,99,255,0.2);
+  border-radius: 12px;
+  padding: 18px 22px;
+  min-width: 220px;
+  flex-shrink: 0;
+}
+
+.cs-meta-item {
+  margin-bottom: 10px;
+}
+
+.cs-meta-item:last-child { margin-bottom: 0; }
+
+.cs-meta-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #a0a0c0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
+}
+
+.cs-meta-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Metrics bar */
+.cs-metrics-bar {
+  background: #1f1b3a;
+  padding: 28px 40px;
+  display: grid;
+  gap: 16px;
+}
+
+.cs-metrics-bar.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.cs-metrics-bar.cols-6 { grid-template-columns: repeat(3, 1fr); }
+.cs-metrics-bar.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+.cs-metric-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(108,99,255,0.2);
+  border-radius: 10px;
+  padding: 16px 18px;
+  text-align: center;
+}
+
+.cs-metric-box.up .cs-metric-num { color: #4fffb0; }
+.cs-metric-box.down .cs-metric-num { color: #ff5c7c; }
+.cs-metric-box.neutral .cs-metric-num { color: #6c63ff; }
+
+.cs-metric-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.cs-metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #a0a0c0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Challenge/Solution sections */
+.cs-body {
+  padding: 32px 40px;
+  background: #1a1a2e;
+}
+
+.cs-section {
+  margin-bottom: 30px;
+}
+
+.cs-section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cs-section-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(135deg, #6c63ff, #00a8ff);
+  border-radius: 2px;
+}
+
+.cs-section-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #d0d0e8;
+}
+
+.cs-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.cs-bullets li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #d0d0e8;
+}
+
+.cs-bullets li::before {
+  content: '✦';
+  color: #6c63ff;
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: 10px;
+}
+
+/* Before/After */
+.cs-before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.cs-ba-col {
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 16px 18px;
+  border: 1px solid rgba(108,99,255,0.15);
+}
+
+.cs-ba-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cs-ba-title.before { color: #ff5c7c; }
+.cs-ba-title.after { color: #4fffb0; }
+
+.cs-ba-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #d0d0e8;
+  margin-bottom: 7px;
+}
+
+.cs-ba-item .ba-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.cs-ba-item .ba-dot.before { background: #ff5c7c; }
+.cs-ba-item .ba-dot.after { background: #4fffb0; }
+
+/* Keyword table */
+.cs-kw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.cs-kw-table thead th {
+  font-size: 10px;
+  font-weight: 700;
+  color: #a0a0c0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 14px;
+  text-align: left;
+  background: rgba(108,99,255,0.1);
+  border-bottom: 1px solid rgba(108,99,255,0.2);
+}
+
+.cs-kw-table tbody td {
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(108,99,255,0.08);
+  color: #d0d0e8;
+}
+
+.cs-kw-table tbody tr:hover td {
+  background: rgba(108,99,255,0.05);
+}
+
+.cs-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(135deg, #6c63ff, #00a8ff);
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  color: white;
+}
+
+.cs-rank-up { color: #4fffb0; font-weight: 700; font-size: 12px; }
+.cs-rank-down { color: #ff5c7c; font-weight: 700; font-size: 12px; }
+.cs-rank-new { color: #ffd166; font-weight: 700; font-size: 11px; }
+
+/* Footer */
+.cs-footer {
+  background: #1f1b3a;
+  border-top: 1px solid rgba(108,99,255,0.2);
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cs-footer-logo {
+  height: 22px;
+  width: auto;
+}
+
+.cs-footer-social {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #a0a0c0;
+  font-weight: 600;
+}
+
+.cs-social-link {
+  width: 28px;
+  height: 28px;
+  background: rgba(108,99,255,0.15);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #6c63ff;
+  text-decoration: none;
+}
+
+.cs-footer-url {
+  font-size: 12px;
+  color: #a0a0c0;
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  body, .app-wrapper, .main-content {
+    all: unset;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .sidebar, .topbar, .form-area, .preview-close-btn,
+  .template-tabs, .drafts-panel, .preview-outer > * > *:not(#cs-output) {
+    display: none !important;
+  }
+
+  #cs-print-target {
+    display: block !important;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+  }
+
+  .cs-page {
+    page-break-after: always;
+    width: 100%;
+  }
+
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 9999;
+  transform: translateY(60px);
+  opacity: 0;
+  transition: all 0.3s;
+  max-width: 320px;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast.success { border-color: rgba(79,255,176,0.3); }
+.toast.error { border-color: rgba(255,92,124,0.3); }
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 0;
+}
+
+/* Section title display */
+.page-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.page-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+/* Preview toggle */
+.preview-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+}
+
+</style>
+</head>
+<body>
+
+<div id="app" class="app-wrapper">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 407.1967 118.73644" height="30"><defs><style>.lc1{fill:url(#lg1);}.lc1,.lc2{stroke-width:0px;}.lc2{fill:#ffffff;}</style><radialGradient id="lg1" cx="13.46" cy="119" r="144.93" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#a74a9c"/><stop offset=".15" stop-color="#a74a9c"/><stop offset=".63" stop-color="#692c8d"/><stop offset="1" stop-color="#04bfdc"/></radialGradient></defs><path class="lc2" d="m147.18,95.9h4.23l5.58,9.39,5.5-9.39h4.15v19.1h-4.05v-11.73l-4.36,7.47h-2.59l-4.41-7.52v11.78h-4.05v-19.1Z"/><path class="lc2" d="m177.76,95.9h4.2l6.49,19.1h-4.49l-.88-2.88h-6.43l-.88,2.88h-4.44l6.43-19.1Zm4.18,12.53l-2.1-6.77-2.08,6.77h4.18Z"/><path class="lc2" d="m197.42,107.52v7.47h-4.31v-19.1h6.49c4.05,0,6.54,2.02,6.54,5.94,0,2.62-1.58,4.59-4.28,5.27l5.48,7.89h-5.19l-4.72-7.47Zm1.97-3.45c1.45,0,2.36-.86,2.36-2.23,0-1.37-.91-2.23-2.36-2.23h-1.97v4.46h1.97Z"/><path class="lc2" d="m216.54,107.06v7.94h-4.31v-19.1h4.31v7.39l5.22-7.24h5.06l-6.57,8.95,6.93,9.99h-5.24l-5.4-7.94Z"/><path class="lc2" d="m231.56,95.9h10.82v4h-6.51v3.45h6.44v4h-6.44v3.66h6.62v4h-10.92v-19.1Z"/><path class="lc2" d="m251.3,99.9h-4.31v-4h12.92v4h-4.31v15.1h-4.31v-15.1Z"/><path class="lc2" d="m264.76,95.9h4.31v19.1h-4.31v-19.1Z"/><path class="lc2" d="m275.39,95.9h3.89l7.27,11.34v-11.34h4.05v19.1h-3.89l-7.27-11.31v11.31h-4.05v-19.1Z"/><path class="lc2" d="m295.33,105.45c0-5.84,4.18-9.94,9.94-9.94,3.01,0,5.63,1.04,7.68,3.43l-3.14,2.96c-1.06-1.43-2.72-2.31-4.54-2.31-3.32,0-5.53,2.44-5.53,5.89,0,3.56,2.36,5.89,5.53,5.89,2.67,0,4.49-1.58,4.85-3.79h-5.58v-3.79h10.17v1.66c0,5.92-3.71,9.94-9.44,9.94-5.68,0-9.94-4.1-9.94-9.94Z"/><path class="lc2" d="m270.85,37.19c5.42,5.34,8.14,12.53,8.14,21.58,0,8.84-3.11,16.05-9.32,21.63-6.21,5.65-13.96,8.47-23.24,8.47-9.03,0-16.25-2.68-21.64-8.06-5.4-5.37-8.09-12.62-8.09-21.73,0-8.77,3.11-15.95,9.32-21.53,6.15-5.58,13.89-8.37,23.24-8.37,8.97,0,16.17,2.67,21.59,8.01Zm-28.6-1.24c-5.04,1.12-6.06,11.79-3.2,24.95,2.69,12.36,9.22,22.69,14.18,21.45,5.3-1.32,5.6-14.49,2.71-25.81-4.28-16.73-9.76-21.47-13.69-20.6Z"/><path class="lc2" d="m334.5,65.22c-4,4.68-10.68,8.13-18.03,8.13-10.46,0-16.08-8.62-17.77-15.21l35.36-7.33c-1.98-18.76-19.6-23.29-29.1-21.65-8.85,1.53-15.81,5.81-20.93,12.56-5.12,6.75-6.9,14.36-5.35,22.82,1.56,8.46,5.67,14.92,12.33,19.36,6.66,4.45,13.43,6.38,22.94,4.29,18.5-4.08,21.39-19,22.44-22.32l-1.89-.65Zm-30.13-29.63c3.84-.59,8.43,1.61,9.4,6.7.41,2.14.26,4.54-1.14,6.58-1.17,1.71-3.22,3.17-6.56,4.02l-8.27,1.73c-2.08-11.61.45-18.08,6.57-19.02Z"/><path class="lc2" d="m174.05,84.3c10.79-19.95,43.92-71.86,43.92-71.86h-67.58v21.58c20.88,0,33.98-19.19,41.63-19.19-19.79,32.03-44.83,72.3-44.83,72.3h66.45v-24.79c-18.84,1.42-31.17,21.97-39.58,21.97Z"/><path class="lc2" d="m382.13,87.13h25.07l-24.81-32.54c10.79-7.12,17.1-15.14,19.26-23.5h-22.98c0,5.54-2.51,15.4-17.08,26.26v-57.35l-28,11.89c3.92,3.84,5.87,10.93,5.87,17.19l.02,58.05h22.12v-22.14c1.38-.54,2.73-1.08,4.04-1.63l16.49,23.78Z"/><path class="lc1" d="m58.67,87.64c-7.43,5.88-16.24,11.68-25.15,11.68-6.48,0-8.01-6.74-8.01-11.18,0-17.92,25.03-46.95,25.45-53.77.16-2.62-.76-4.7-4.09-4.7-3.07,0-19.59,4.08-46.75,26.56-1.36,21.01,8.65,42.05,27.83,53.83,27.61,16.97,63.75,8.34,80.71-19.27,10.09-16.42,11.11-35.85,4.49-52.47-15.56,14.44-50.82,46.44-54.48,49.34Zm-39.91-23.35c-1.55,0-2.8-1.26-2.8-2.8s1.26-2.8,2.8-2.8,2.8,1.26,2.8,2.8-1.26,2.8-2.8,2.8Zm63.94,30.53c-3.03.9-5.4,3.28-6.31,6.31-.1.32-.4.54-.73.54s-.64-.22-.73-.54c-.9-3.03-3.28-5.4-6.31-6.31-.32-.1-.54-.4-.54-.73s.22-.64.54-.74c3.03-.9,5.4-3.28,6.31-6.31.1-.33.4-.54.73-.54s.64.22.73.54c.9,3.03,3.28,5.4,6.31,6.31.32.1.54.4.54.74s-.22.64-.54.73Zm17.97-18.02c-1.55,0-2.8-1.25-2.8-2.8s1.26-2.8,2.8-2.8,2.8,1.26,2.8,2.8-1.26,2.8-2.8,2.8Zm32.28-57.55c-3.62.3-9.62,1.32-15.62,4.49-2.05-1.36-4.43-2.11-6.87-2.15-.87-.01-1.27,1.11-.6,1.68,2.02,1.69,3.82,3.7,5.36,5.98-1.73.8-3.46,1.61-5.2,2.42-4.74-8.59-11.68-16.11-20.63-21.61-21.66-13.32-57.8-4.7-74.76,22.91-3.8,6.19-6.31,12.8-7.61,19.54,12.13-11.62,42.1-38.2,62.56-38.2,6.7,0,10.33,4.54,10.33,8.75,0,6.62-10.56,17.28-15.87,25.32-4.19,6.36-13.8,20.46-13.8,26.81,0,2.31.89,4.89,4.21,4.89,4.2,0,23.39-11.5,39.21-23.22,9.69-7.18,21.32-15.38,29.28-20.95.05.09.08.18.13.27,0,0,.01-.01.01-.01.16.33.3.66.45.99.07.15.15.3.21.45,0,0,0,0,0,0,.87,2.02,1.52,4.08,1.91,6.18.16.86,1.33,1.07,1.75.31,1.17-2.14,1.69-4.59,1.52-7.04,5.72-3.64,9.57-8.36,11.61-11.36.86-1.26-.12-2.94-1.64-2.82Zm-45.94,18.55c-2.58.77-4.61,2.8-5.38,5.38-.08.28-.34.46-.63.46s-.54-.19-.63-.46c-.77-2.58-2.8-4.61-5.38-5.38-.28-.08-.46-.34-.46-.63s.19-.54.46-.63c2.58-.77,4.61-2.8,5.38-5.38.08-.28.34-.46.63-.46s.54.19.63.46c.77,2.58,2.8,4.61,5.38,5.38.28.08.46.34.46.63s-.19.54-.46.63Z"/></svg>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Create</div>
+      <div class="nav-item active" onclick="showPanel('seo')" id="nav-seo">
+        <span class="nav-icon">📈</span> SEO Case Study
+      </div>
+      <div class="nav-item" onclick="showPanel('paid')" id="nav-paid">
+        <span class="nav-icon">💰</span> Paid Advertising
+      </div>
+      <div class="nav-item" onclick="showPanel('fb')" id="nav-fb">
+        <span class="nav-icon">🎯</span> Facebook Leads
+      </div>
+      <div style="height:16px;"></div>
+      <div class="sidebar-section-label">Manage</div>
+      <div class="nav-item" onclick="showPanel('drafts')" id="nav-drafts">
+        <span class="nav-icon">📁</span> Saved Drafts
+        <span class="nav-badge" id="draft-count">0</span>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="ai-badge">
+        <div class="dot"></div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#fff;margin-bottom:1px;">AI Writing Assistant</div>
+          <div style="font-size:10px;">Claude Sonnet — Active</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">SEO Case Study</div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline" onclick="saveDraft()">💾 Save Draft</button>
+        <button class="btn btn-ghost" onclick="togglePreview()">👁 Preview</button>
+        <button class="btn btn-primary" onclick="exportPDF()">⬇ Export PDF</button>
+      </div>
+    </div>
+
+    <!-- ======================== SEO FORM ======================== -->
+    <div class="form-panel active form-area" id="panel-seo">
+      <div class="page-title">SEO Case Study</div>
+      <div class="page-sub">Fill in the fields below to generate a polished, print-ready SEO case study.</div>
+
+      <!-- Client Info -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">🏢</div>
+          <div>
+            <div class="section-title">Client Information</div>
+            <div class="section-sub">Basic details about the client and campaign</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Client Name</label>
+            <input class="form-input" id="seo-client" type="text" placeholder="e.g. Sunshine Dental" oninput="liveUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Industry</label>
+            <input class="form-input" id="seo-industry" type="text" placeholder="e.g. Dental / Healthcare" oninput="liveUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input class="form-input" id="seo-location" type="text" placeholder="e.g. Austin, TX" oninput="liveUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Campaign Start Date</label>
+            <input class="form-input" id="seo-start" type="text" placeholder="e.g. January 2025" oninput="liveUpdate()">
+          </div>
+          <div class="form-group span-2">
+            <label class="form-label">SEO Package / Plan Name</label>
+            <input class="form-input" id="seo-package" type="text" placeholder="e.g. Website Design + SEO (since 2024)" oninput="liveUpdate()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenge & Solution -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">✍️</div>
+          <div>
+            <div class="section-title">Challenge & Solution Copy</div>
+            <div class="section-sub">Enter notes and use AI to polish into professional copy</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group span-2">
+            <label class="form-label">The Challenge (rough notes or final copy)</label>
+            <textarea class="form-textarea" id="seo-challenge" placeholder="e.g. Client had low visibility, no Google rankings, inconsistent lead gen..." oninput="liveUpdate()"></textarea>
+            <button class="ai-assist-btn" onclick="aiPolish('seo-challenge', 'challenge')">
+              ✨ Polish with AI — turn rough notes into professional copy
+            </button>
+            <div class="ai-loading" id="ai-loading-seo-challenge"><div class="spinner"></div> AI is writing...</div>
+          </div>
+          <div class="form-group span-2">
+            <label class="form-label">The Solution (what Zoek did)</label>
+            <textarea class="form-textarea" id="seo-solution" placeholder="e.g. Implemented full SEO program: keyword targeting, GBP optimization, technical SEO, backlink building..." oninput="liveUpdate()"></textarea>
+            <button class="ai-assist-btn" onclick="aiPolish('seo-solution', 'solution')">
+              ✨ Polish with AI — turn rough notes into professional copy
+            </button>
+            <div class="ai-loading" id="ai-loading-seo-solution"><div class="spinner"></div> AI is writing...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Headline Metrics -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">📊</div>
+          <div>
+            <div class="section-title">Headline Metrics (6 stats)</div>
+            <div class="section-sub">These appear as large callout numbers on the case study</div>
+          </div>
+        </div>
+        <div class="metrics-grid" id="seo-metrics-grid">
+          <!-- 6 metric cards generated by JS -->
+        </div>
+      </div>
+
+      <!-- Keyword Rankings -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">🔑</div>
+          <div>
+            <div class="section-title">Keyword Rankings Table</div>
+            <div class="section-sub">Add tracked keywords and their current rank positions</div>
+          </div>
+        </div>
+        <table class="kw-table" id="kw-table">
+          <thead>
+            <tr>
+              <th>Keyword</th>
+              <th style="width:80px">Rank</th>
+              <th style="width:100px">Change</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody id="kw-tbody">
+            <!-- rows added by JS -->
+          </tbody>
+        </table>
+        <button class="btn btn-ghost btn-sm add-row-btn" onclick="addKwRow()">+ Add Keyword</button>
+      </div>
+
+      <!-- Before / After -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">↔️</div>
+          <div>
+            <div class="section-title">Before & After</div>
+            <div class="section-sub">Contrast the client's situation before and after working with Zoek</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" style="color:var(--red);">✗ Before (problems)</label>
+            <div class="bullet-list" id="seo-before-list"></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addBullet('seo-before-list','before')">+ Add Item</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color:var(--green);">✓ After (results)</label>
+            <div class="bullet-list" id="seo-after-list"></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addBullet('seo-after-list','after')">+ Add Item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== PAID ADS FORM ======================== -->
+    <div class="form-panel form-area" id="panel-paid">
+      <div class="page-title">Paid Advertising Case Study</div>
+      <div class="page-sub">Generate a polished paid advertising case study with key campaign metrics.</div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">🏢</div>
+          <div><div class="section-title">Client Information</div></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Client Name</label>
+            <input class="form-input" id="paid-client" type="text" placeholder="e.g. Grace Community Church" oninput="liveUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Industry</label>
+            <input class="form-input" id="paid-industry" type="text" placeholder="e.g. Churches / Non-profit" oninput="liveUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input class="form-input" id="paid-location" type="text" placeholder="e.g. Nashville, TN" oninput="liveUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ad Platform</label>
+            <select class="form-select" id="paid-platform" onchange="liveUpdate()">
+              <option>Google Ads</option>
+              <option>Facebook / Meta</option>
+              <option>Google Ads + Facebook</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">✍️</div>
+          <div><div class="section-title">Challenge & Solution</div></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group span-2">
+            <label class="form-label">The Challenge</label>
+            <textarea class="form-textarea" id="paid-challenge" placeholder="e.g. Limited budget during Lent season, needed to reach community without overspending..." oninput="liveUpdate()"></textarea>
+            <button class="ai-assist-btn" onclick="aiPolish('paid-challenge', 'challenge')">✨ Polish with AI</button>
+            <div class="ai-loading" id="ai-loading-paid-challenge"><div class="spinner"></div> AI is writing...</div>
+          </div>
+          <div class="form-group span-2">
+            <label class="form-label">The Solution</label>
+            <textarea class="form-textarea" id="paid-solution" placeholder="e.g. Managed Ad Campaigns, optimized bid strategy, creative targeting..." oninput="liveUpdate()"></textarea>
+            <button class="ai-assist-btn" onclick="aiPolish('paid-solution', 'solution')">✨ Polish with AI</button>
+            <div class="ai-loading" id="ai-loading-paid-solution"><div class="spinner"></div> AI is writing...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">📊</div>
+          <div>
+            <div class="section-title">Headline Metrics (4 stats)</div>
+            <div class="section-sub">Direction: up = green, down = red (e.g. -37% Ad Spend is good → red/down)</div>
+          </div>
+        </div>
+        <div class="metrics-grid" id="paid-metrics-grid" style="grid-template-columns: repeat(2,1fr);">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">↔️</div>
+          <div><div class="section-title">Before & After</div></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" style="color:var(--red);">✗ Before</label>
+            <div class="bullet-list" id="paid-before-list"></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addBullet('paid-before-list','before')">+ Add Item</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color:var(--green);">✓ After</label>
+            <div class="bullet-list" id="paid-after-list"></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addBullet('paid-after-list','after')">+ Add Item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== FB LEADS FORM ======================== -->
+    <div class="form-panel form-area" id="panel-fb">
+      <div class="page-title">Facebook Leads Campaign Case Study</div>
+      <div class="page-sub">Showcase Facebook lead generation results with conversion metrics.</div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">🏢</div>
+          <div><div class="section-title">Client Information</div></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Client Name</label>
+            <input class="form-input" id="fb-client" type="text" placeholder="e.g. Premier Kitchen Design" oninput="liveUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Industry</label>
+            <input class="form-input" id="fb-industry" type="text" placeholder="e.g. Kitchen Design / Home Improvement" oninput="liveUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input class="form-input" id="fb-location" type="text" placeholder="e.g. Tampa, FL" oninput="liveUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Campaign Duration</label>
+            <input class="form-input" id="fb-duration" type="text" placeholder="e.g. First 6 Months" oninput="liveUpdate()">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">✍️</div>
+          <div><div class="section-title">Challenge & Solution</div></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group span-2">
+            <label class="form-label">The Challenge</label>
+            <textarea class="form-textarea" id="fb-challenge" placeholder="e.g. Small business needed Facebook to generate leads, needed real-time notifications..." oninput="liveUpdate()"></textarea>
+            <button class="ai-assist-btn" onclick="aiPolish('fb-challenge', 'challenge')">✨ Polish with AI</button>
+            <div class="ai-loading" id="ai-loading-fb-challenge"><div class="spinner"></div> AI is writing...</div>
+          </div>
+          <div class="form-group span-2">
+            <label class="form-label">The Solution</label>
+            <textarea class="form-textarea" id="fb-solution" placeholder="e.g. MatchCraft Lead Dashboard, real-time lead notifications, single interface for advertisers..." oninput="liveUpdate()"></textarea>
+            <button class="ai-assist-btn" onclick="aiPolish('fb-solution', 'solution')">✨ Polish with AI</button>
+            <div class="ai-loading" id="ai-loading-fb-solution"><div class="spinner"></div> AI is writing...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">📊</div>
+          <div><div class="section-title">Headline Metrics (4 stats)</div></div>
+        </div>
+        <div class="metrics-grid" id="fb-metrics-grid" style="grid-template-columns: repeat(2,1fr);">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">⚡</div>
+          <div><div class="section-title">Key Benefits</div></div>
+        </div>
+        <div class="bullet-list" id="fb-benefits-list"></div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addBullet('fb-benefits-list','after')">+ Add Benefit</button>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">↔️</div>
+          <div><div class="section-title">Before & After</div></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" style="color:var(--red);">✗ Before</label>
+            <div class="bullet-list" id="fb-before-list"></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addBullet('fb-before-list','before')">+ Add Item</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color:var(--green);">✓ After</label>
+            <div class="bullet-list" id="fb-after-list"></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addBullet('fb-after-list','after')">+ Add Item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== DRAFTS PANEL ======================== -->
+    <div class="drafts-panel form-area" id="panel-drafts">
+      <div class="page-title">Saved Drafts</div>
+      <div class="page-sub">Load a previous case study to continue editing or export it.</div>
+      <div id="drafts-list"></div>
+    </div>
+
+  </div><!-- end main-content -->
+
+</div><!-- end app-wrapper -->
+
+<!-- Preview Panel -->
+<div class="preview-outer" id="preview-outer">
+  <div id="cs-output" style="padding:0; min-height:100vh;"></div>
+</div>
+
+<!-- Print-only target -->
+<div id="cs-print-target" style="display:none;"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+// ZOEK CASE STUDY GENERATOR - JAVASCRIPT
+// =============================================
+
+const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 407.1967 118.73644" height="22"><defs><style>.lc2{fill:#fff;stroke-width:0px;}.lc1{fill:url(#lg2);stroke-width:0px;}</style><radialGradient id="lg2" cx="13.46" cy="119" r="144.93" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#a74a9c"/><stop offset=".15" stop-color="#a74a9c"/><stop offset=".63" stop-color="#692c8d"/><stop offset="1" stop-color="#04bfdc"/></radialGradient></defs><path class="lc2" d="m147.18,95.9h4.23l5.58,9.39,5.5-9.39h4.15v19.1h-4.05v-11.73l-4.36,7.47h-2.59l-4.41-7.52v11.78h-4.05v-19.1Z"/><path class="lc2" d="m177.76,95.9h4.2l6.49,19.1h-4.49l-.88-2.88h-6.43l-.88,2.88h-4.44l6.43-19.1Zm4.18,12.53l-2.1-6.77-2.08,6.77h4.18Z"/><path class="lc2" d="m197.42,107.52v7.47h-4.31v-19.1h6.49c4.05,0,6.54,2.02,6.54,5.94,0,2.62-1.58,4.59-4.28,5.27l5.48,7.89h-5.19l-4.72-7.47Zm1.97-3.45c1.45,0,2.36-.86,2.36-2.23,0-1.37-.91-2.23-2.36-2.23h-1.97v4.46h1.97Z"/><path class="lc2" d="m216.54,107.06v7.94h-4.31v-19.1h4.31v7.39l5.22-7.24h5.06l-6.57,8.95,6.93,9.99h-5.24l-5.4-7.94Z"/><path class="lc2" d="m231.56,95.9h10.82v4h-6.51v3.45h6.44v4h-6.44v3.66h6.62v4h-10.92v-19.1Z"/><path class="lc2" d="m251.3,99.9h-4.31v-4h12.92v4h-4.31v15.1h-4.31v-15.1Z"/><path class="lc2" d="m264.76,95.9h4.31v19.1h-4.31v-19.1Z"/><path class="lc2" d="m275.39,95.9h3.89l7.27,11.34v-11.34h4.05v19.1h-3.89l-7.27-11.31v11.31h-4.05v-19.1Z"/><path class="lc2" d="m295.33,105.45c0-5.84,4.18-9.94,9.94-9.94,3.01,0,5.63,1.04,7.68,3.43l-3.14,2.96c-1.06-1.43-2.72-2.31-4.54-2.31-3.32,0-5.53,2.44-5.53,5.89,0,3.56,2.36,5.89,5.53,5.89,2.67,0,4.49-1.58,4.85-3.79h-5.58v-3.79h10.17v1.66c0,5.92-3.71,9.94-9.44,9.94-5.68,0-9.94-4.1-9.94-9.94Z"/><path class="lc2" d="m270.85,37.19c5.42,5.34,8.14,12.53,8.14,21.58,0,8.84-3.11,16.05-9.32,21.63-6.21,5.65-13.96,8.47-23.24,8.47-9.03,0-16.25-2.68-21.64-8.06-5.4-5.37-8.09-12.62-8.09-21.73,0-8.77,3.11-15.95,9.32-21.53,6.15-5.58,13.89-8.37,23.24-8.37,8.97,0,16.17,2.67,21.59,8.01Zm-28.6-1.24c-5.04,1.12-6.06,11.79-3.2,24.95,2.69,12.36,9.22,22.69,14.18,21.45,5.3-1.32,5.6-14.49,2.71-25.81-4.28-16.73-9.76-21.47-13.69-20.6Z"/><path class="lc2" d="m334.5,65.22c-4,4.68-10.68,8.13-18.03,8.13-10.46,0-16.08-8.62-17.77-15.21l35.36-7.33c-1.98-18.76-19.6-23.29-29.1-21.65-8.85,1.53-15.81,5.81-20.93,12.56-5.12,6.75-6.9,14.36-5.35,22.82,1.56,8.46,5.67,14.92,12.33,19.36,6.66,4.45,13.43,6.38,22.94,4.29,18.5-4.08,21.39-19,22.44-22.32l-1.89-.65Zm-30.13-29.63c3.84-.59,8.43,1.61,9.4,6.7.41,2.14.26,4.54-1.14,6.58-1.17,1.71-3.22,3.17-6.56,4.02l-8.27,1.73c-2.08-11.61.45-18.08,6.57-19.02Z"/><path class="lc2" d="m174.05,84.3c10.79-19.95,43.92-71.86,43.92-71.86h-67.58v21.58c20.88,0,33.98-19.19,41.63-19.19-19.79,32.03-44.83,72.3-44.83,72.3h66.45v-24.79c-18.84,1.42-31.17,21.97-39.58,21.97Z"/><path class="lc2" d="m382.13,87.13h25.07l-24.81-32.54c10.79-7.12,17.1-15.14,19.26-23.5h-22.98c0,5.54-2.51,15.4-17.08,26.26v-57.35l-28,11.89c3.92,3.84,5.87,10.93,5.87,17.19l.02,58.05h22.12v-22.14c1.38-.54,2.73-1.08,4.04-1.63l16.49,23.78Z"/><path class="lc1" d="m58.67,87.64c-7.43,5.88-16.24,11.68-25.15,11.68-6.48,0-8.01-6.74-8.01-11.18,0-17.92,25.03-46.95,25.45-53.77.16-2.62-.76-4.7-4.09-4.7-3.07,0-19.59,4.08-46.75,26.56-1.36,21.01,8.65,42.05,27.83,53.83,27.61,16.97,63.75,8.34,80.71-19.27,10.09-16.42,11.11-35.85,4.49-52.47-15.56,14.44-50.82,46.44-54.48,49.34Zm-39.91-23.35c-1.55,0-2.8-1.26-2.8-2.8s1.26-2.8,2.8-2.8,2.8,1.26,2.8,2.8-1.26,2.8-2.8,2.8Zm63.94,30.53c-3.03.9-5.4,3.28-6.31,6.31-.1.32-.4.54-.73.54s-.64-.22-.73-.54c-.9-3.03-3.28-5.4-6.31-6.31-.32-.1-.54-.4-.54-.73s.22-.64.54-.74c3.03-.9,5.4-3.28,6.31-6.31.1-.33.4-.54.73-.54s.64.22.73.54c.9,3.03,3.28,5.4,6.31,6.31.32.1.54.4.54.74s-.22.64-.54.73Zm17.97-18.02c-1.55,0-2.8-1.25-2.8-2.8s1.26-2.8,2.8-2.8,2.8,1.26,2.8,2.8-1.26,2.8-2.8,2.8Zm32.28-57.55c-3.62.3-9.62,1.32-15.62,4.49-2.05-1.36-4.43-2.11-6.87-2.15-.87-.01-1.27,1.11-.6,1.68,2.02,1.69,3.82,3.7,5.36,5.98-1.73.8-3.46,1.61-5.2,2.42-4.74-8.59-11.68-16.11-20.63-21.61-21.66-13.32-57.8-4.7-74.76,22.91-3.8,6.19-6.31,12.8-7.61,19.54,12.13-11.62,42.1-38.2,62.56-38.2,6.7,0,10.33,4.54,10.33,8.75,0,6.62-10.56,17.28-15.87,25.32-4.19,6.36-13.8,20.46-13.8,26.81,0,2.31.89,4.89,4.21,4.89,4.2,0,23.39-11.5,39.21-23.22,9.69-7.18,21.32-15.38,29.28-20.95.05.09.08.18.13.27,0,0,.01-.01.01-.01.16.33.3.66.45.99.07.15.15.3.21.45,0,0,0,0,0,0,.87,2.02,1.52,4.08,1.91,6.18.16.86,1.33,1.07,1.75.31,1.17-2.14,1.69-4.59,1.52-7.04,5.72-3.64,9.57-8.36,11.61-11.36.86-1.26-.12-2.94-1.64-2.82Zm-45.94,18.55c-2.58.77-4.61,2.8-5.38,5.38-.08.28-.34.46-.63.46s-.54-.19-.63-.46c-.77-2.58-2.8-4.61-5.38-5.38-.28-.08-.46-.34-.46-.63s.19-.54.46-.63c2.58-.77,4.61-2.8,5.38-5.38.08-.28.34-.46.63-.46s.54.19.63.46c.77,2.58,2.8,4.61,5.38,5.38.28.08.46.34.46.63s-.19.54-.46.63Z"/></svg>`;
+
+let currentPanel = 'seo';
+let previewVisible = false;
+
+// ===== PANEL SWITCHING =====
+function showPanel(name) {
+  currentPanel = name;
+  document.querySelectorAll('.form-panel, .drafts-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  
+  if (name === 'drafts') {
+    document.getElementById('panel-drafts').classList.add('active');
+    document.getElementById('nav-drafts').classList.add('active');
+    document.getElementById('topbar-title').textContent = 'Saved Drafts';
+    renderDrafts();
+  } else {
+    document.getElementById('panel-' + name).classList.add('active');
+    document.getElementById('nav-' + name).classList.add('active');
+    const titles = { seo: 'SEO Case Study', paid: 'Paid Advertising Case Study', fb: 'Facebook Leads Case Study' };
+    document.getElementById('topbar-title').textContent = titles[name];
+  }
+  if (previewVisible) liveUpdate();
+}
+
+// ===== INIT METRICS GRIDS =====
+function initMetrics() {
+  const seoDefaults = [
+    { num: '+47%', label: 'Website Traffic', dir: 'up' },
+    { num: '1.7K', label: 'Organic Visitors/mo', dir: 'neutral' },
+    { num: '38', label: 'Form Submissions/mo', dir: 'up' },
+    { num: '24', label: 'Phone Call Leads/mo', dir: 'up' },
+    { num: '45', label: 'Backlinks Created', dir: 'neutral' },
+    { num: '2.6K', label: 'Visitors in 90 Days', dir: 'up' },
+  ];
+  const paidDefaults = [
+    { num: '+67.5%', label: 'Increase in Clicks', dir: 'up' },
+    { num: '-62.8%', label: 'Cost Per Click', dir: 'down' },
+    { num: '+3.3%', label: 'Click Through Rate', dir: 'up' },
+    { num: '-37.8%', label: 'Ad Spend Reduction', dir: 'down' },
+  ];
+  const fbDefaults = [
+    { num: '+322%', label: 'More Leads', dir: 'up' },
+    { num: '+127%', label: 'Higher Conversion Rate', dir: 'up' },
+    { num: '-76%', label: 'Lower Cost Per Lead', dir: 'down' },
+    { num: '+85%', label: 'More Clicks', dir: 'up' },
+  ];
+  buildMetricsGrid('seo-metrics-grid', seoDefaults, 6);
+  buildMetricsGrid('paid-metrics-grid', paidDefaults, 4);
+  buildMetricsGrid('fb-metrics-grid', fbDefaults, 4);
+}
+
+function buildMetricsGrid(containerId, defaults, count) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const d = defaults[i] || { num: '', label: '', dir: 'up' };
+    container.innerHTML += `
+      <div class="metric-card">
+        <div class="metric-card-label">Metric ${i+1}</div>
+        <div class="metric-card-inputs">
+          <input class="form-input" placeholder="e.g. +47%" value="${d.num}" 
+            id="metric-num-${containerId}-${i}" style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px;" oninput="liveUpdate()">
+          <input class="form-input" placeholder="Label (e.g. Website Traffic)" value="${d.label}"
+            id="metric-label-${containerId}-${i}" style="font-size:12px;" oninput="liveUpdate()">
+          <select class="form-select" id="metric-dir-${containerId}-${i}" style="font-size:12px;" onchange="liveUpdate()">
+            <option value="up" ${d.dir==='up'?'selected':''}>↑ Positive (green)</option>
+            <option value="down" ${d.dir==='down'?'selected':''}>↓ Negative (red)</option>
+            <option value="neutral" ${d.dir==='neutral'?'selected':''}>● Neutral (purple)</option>
+          </select>
+        </div>
+      </div>`;
+  }
+}
+
+function getMetrics(containerId, count) {
+  const metrics = [];
+  for (let i = 0; i < count; i++) {
+    metrics.push({
+      num: (document.getElementById(`metric-num-${containerId}-${i}`) || {}).value || '',
+      label: (document.getElementById(`metric-label-${containerId}-${i}`) || {}).value || '',
+      dir: (document.getElementById(`metric-dir-${containerId}-${i}`) || {}).value || 'up',
+    });
+  }
+  return metrics;
+}
+
+// ===== KEYWORD TABLE =====
+let kwRows = [];
+function initKwTable() {
+  kwRows = [
+    { kw: 'Hot Yoga Nomad NY', rank: '1', change: 'up' },
+    { kw: 'Yoga Classes Near Me', rank: '2', change: 'up' },
+    { kw: 'Best Yoga Studio NYC', rank: '3', change: 'new' },
+  ];
+  renderKwTable();
+}
+
+function renderKwTable() {
+  const tbody = document.getElementById('kw-tbody');
+  tbody.innerHTML = kwRows.map((r, i) => `
+    <tr>
+      <td><input class="form-input" value="${r.kw}" placeholder="Keyword" oninput="kwRows[${i}].kw=this.value;liveUpdate()"></td>
+      <td><input class="form-input rank-input" value="${r.rank}" placeholder="1" oninput="kwRows[${i}].rank=this.value;liveUpdate()"></td>
+      <td>
+        <select class="form-select change-select" onchange="kwRows[${i}].change=this.value;liveUpdate()">
+          <option value="up" ${r.change==='up'?'selected':''}>↑ Up</option>
+          <option value="down" ${r.change==='down'?'selected':''}>↓ Down</option>
+          <option value="new" ${r.change==='new'?'selected':''}>★ New</option>
+          <option value="same" ${r.change==='same'?'selected':''}>– Same</option>
+        </select>
+      </td>
+      <td><button class="btn btn-danger" onclick="removeKwRow(${i})">✕</button></td>
+    </tr>`).join('');
+}
+
+function addKwRow() {
+  kwRows.push({ kw: '', rank: '', change: 'up' });
+  renderKwTable();
+}
+
+function removeKwRow(i) {
+  kwRows.splice(i, 1);
+  renderKwTable();
+  liveUpdate();
+}
+
+// ===== BULLET LISTS =====
+const bulletData = {};
+
+function addBullet(listId, type) {
+  if (!bulletData[listId]) bulletData[listId] = [];
+  bulletData[listId].push('');
+  renderBullets(listId, type);
+}
+
+function renderBullets(listId, type) {
+  const container = document.getElementById(listId);
+  const data = bulletData[listId] || [];
+  container.innerHTML = data.map((v, i) => `
+    <div class="bullet-row">
+      <div class="bullet-indicator ${type}"></div>
+      <input class="form-input" value="${v}" placeholder="Enter item..." style="flex:1" 
+        oninput="bulletData['${listId}'][${i}]=this.value;liveUpdate()">
+      <button class="btn btn-danger" onclick="removeBullet('${listId}','${type}',${i})">✕</button>
+    </div>`).join('');
+}
+
+function removeBullet(listId, type, i) {
+  bulletData[listId].splice(i, 1);
+  renderBullets(listId, type);
+  liveUpdate();
+}
+
+function getBullets(listId) {
+  return (bulletData[listId] || []).filter(v => v.trim());
+}
+
+// ===== AI POLISH =====
+async function aiPolish(fieldId, type) {
+  const field = document.getElementById(fieldId);
+  const notes = field.value.trim();
+  if (!notes) { showToast('Please enter some notes first.', 'error'); return; }
+
+  const loadingEl = document.getElementById('ai-loading-' + fieldId);
+  if (loadingEl) loadingEl.classList.add('visible');
+
+  const prompts = {
+    challenge: `You are a professional marketing copywriter for Zoek Marketing, a digital marketing agency. 
+Write a polished "The Challenge" paragraph for a client case study based on these rough notes:
+
+"${notes}"
+
+Write 2-3 sentences in a professional but approachable tone. Focus on the client's pain points and what they needed. 
+Return ONLY the paragraph text, no headers, no quotes, no extra formatting.`,
+    solution: `You are a professional marketing copywriter for Zoek Marketing, a digital marketing agency.
+Write a polished "The Solution" paragraph for a client case study based on these rough notes:
+
+"${notes}"
+
+Write 2-3 sentences describing what Zoek implemented. Be specific and results-oriented in tone.
+Return ONLY the paragraph text, no headers, no quotes, no extra formatting.`
+  };
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompts[type] }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || '').join('').trim();
+    if (text) {
+      field.value = text;
+      liveUpdate();
+      showToast('✨ AI copy generated!', 'success');
+    } else {
+      showToast('AI response was empty. Please try again.', 'error');
+    }
+  } catch (e) {
+    showToast('AI request failed. Check your connection.', 'error');
+  } finally {
+    if (loadingEl) loadingEl.classList.remove('visible');
+  }
+}
+
+// ===== CASE STUDY RENDER =====
+function renderCaseStudy(type) {
+  if (type === 'seo') return renderSEO();
+  if (type === 'paid') return renderPaid();
+  if (type === 'fb') return renderFB();
+  return '';
+}
+
+function metricColsClass(count) {
+  if (count <= 3) return 'cols-3';
+  if (count === 4) return 'cols-4';
+  return 'cols-6';
+}
+
+function renderMetricBoxes(metrics) {
+  return metrics.map(m => `
+    <div class="cs-metric-box ${m.dir}">
+      <div class="cs-metric-num">${m.num || '—'}</div>
+      <div class="cs-metric-label">${m.label || 'Metric'}</div>
+    </div>`).join('');
+}
+
+function renderBulletItems(bullets, type) {
+  if (!bullets.length) return '<li>—</li>';
+  return bullets.map(b => `<li>${b}</li>`).join('');
+}
+
+function renderBAItems(bullets, type) {
+  if (!bullets.length) return `<div class="cs-ba-item"><div class="ba-dot ${type}"></div><span>—</span></div>`;
+  return bullets.map(b => `<div class="cs-ba-item"><div class="ba-dot ${type}"></div><span>${b}</span></div>`).join('');
+}
+
+function footerHTML() {
+  return `
+    <div class="cs-footer">
+      ${LOGO_SVG}
+      <div class="cs-footer-url">www.gozoek.com</div>
+      <div class="cs-footer-social">
+        Follow Us!
+        <a class="cs-social-link" href="#">f</a>
+        <a class="cs-social-link" href="#">ig</a>
+        <a class="cs-social-link" href="#">𝕏</a>
+        <a class="cs-social-link" href="#">in</a>
+      </div>
+    </div>`;
+}
+
+function renderSEO() {
+  const client = document.getElementById('seo-client').value || 'Client Name';
+  const industry = document.getElementById('seo-industry').value || '';
+  const location = document.getElementById('seo-location').value || '';
+  const start = document.getElementById('seo-start').value || '';
+  const pkg = document.getElementById('seo-package').value || 'Website Design + SEO';
+  const challenge = document.getElementById('seo-challenge').value || '';
+  const solution = document.getElementById('seo-solution').value || '';
+  const metrics = getMetrics('seo-metrics-grid', 6);
+  const before = getBullets('seo-before-list');
+  const after = getBullets('seo-after-list');
+
+  const kwRows_ = kwRows.filter(r => r.kw.trim());
+
+  return `
+  <div class="cs-page">
+    <div class="cs-header">
+      <div class="cs-header-left">
+        ${LOGO_SVG}
+        <div style="margin-top:18px;">
+          <div class="cs-tag">SEO Case Study</div>
+          <h1 class="cs-headline">How <em>${client}</em> Increased Online Visibility & Organic Growth</h1>
+        </div>
+      </div>
+      <div class="cs-header-right">
+        <div class="cs-meta-item"><div class="cs-meta-label">Client</div><div class="cs-meta-value">${client}</div></div>
+        ${industry ? `<div class="cs-meta-item"><div class="cs-meta-label">Industry</div><div class="cs-meta-value">${industry}</div></div>` : ''}
+        ${location ? `<div class="cs-meta-item"><div class="cs-meta-label">Location</div><div class="cs-meta-value">${location}</div></div>` : ''}
+        ${start ? `<div class="cs-meta-item"><div class="cs-meta-label">Since</div><div class="cs-meta-value">${start}</div></div>` : ''}
+        ${pkg ? `<div class="cs-meta-item"><div class="cs-meta-label">Zoek Services</div><div class="cs-meta-value">${pkg}</div></div>` : ''}
+      </div>
+    </div>
+
+    <div class="cs-metrics-bar ${metricColsClass(6)}">
+      ${renderMetricBoxes(metrics)}
+    </div>
+
+    <div class="cs-body">
+      ${challenge ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">The Challenge</h2>
+        <p class="cs-section-text">${challenge}</p>
+      </div>` : ''}
+
+      ${solution ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">The Solution</h2>
+        <p class="cs-section-text">${solution}</p>
+      </div>` : ''}
+
+      ${kwRows_.length ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">Keyword Rankings</h2>
+        <table class="cs-kw-table">
+          <thead><tr><th>Keyword</th><th>Current Rank</th><th>Change</th></tr></thead>
+          <tbody>
+            ${kwRows_.map(r => `
+              <tr>
+                <td>${r.kw}</td>
+                <td><span class="cs-rank-badge">${r.rank || '—'}</span></td>
+                <td>
+                  ${r.change === 'up' ? '<span class="cs-rank-up">↑ Improved</span>' :
+                    r.change === 'down' ? '<span class="cs-rank-down">↓ Declined</span>' :
+                    r.change === 'new' ? '<span class="cs-rank-new">★ New Entry</span>' :
+                    '<span style="color:#a0a0c0">– Unchanged</span>'}
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>` : ''}
+
+      ${(before.length || after.length) ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">Before & After Zoek</h2>
+        <div class="cs-before-after">
+          <div class="cs-ba-col">
+            <div class="cs-ba-title before">✗ Before</div>
+            ${renderBAItems(before, 'before')}
+          </div>
+          <div class="cs-ba-col">
+            <div class="cs-ba-title after">✓ After</div>
+            ${renderBAItems(after, 'after')}
+          </div>
+        </div>
+      </div>` : ''}
+    </div>
+
+    ${footerHTML()}
+  </div>`;
+}
+
+function renderPaid() {
+  const client = document.getElementById('paid-client').value || 'Client Name';
+  const industry = document.getElementById('paid-industry').value || '';
+  const location = document.getElementById('paid-location').value || '';
+  const platform = document.getElementById('paid-platform').value || 'Google Ads';
+  const challenge = document.getElementById('paid-challenge').value || '';
+  const solution = document.getElementById('paid-solution').value || '';
+  const metrics = getMetrics('paid-metrics-grid', 4);
+  const before = getBullets('paid-before-list');
+  const after = getBullets('paid-after-list');
+
+  return `
+  <div class="cs-page">
+    <div class="cs-header">
+      <div class="cs-header-left">
+        ${LOGO_SVG}
+        <div style="margin-top:18px;">
+          <div class="cs-tag">Paid Advertising Case Study</div>
+          <h1 class="cs-headline">How <em>${client}</em> Maximized Results with Managed Ad Campaigns</h1>
+        </div>
+      </div>
+      <div class="cs-header-right">
+        <div class="cs-meta-item"><div class="cs-meta-label">Client</div><div class="cs-meta-value">${client}</div></div>
+        ${industry ? `<div class="cs-meta-item"><div class="cs-meta-label">Industry</div><div class="cs-meta-value">${industry}</div></div>` : ''}
+        ${location ? `<div class="cs-meta-item"><div class="cs-meta-label">Location</div><div class="cs-meta-value">${location}</div></div>` : ''}
+        <div class="cs-meta-item"><div class="cs-meta-label">Platform</div><div class="cs-meta-value">${platform}</div></div>
+      </div>
+    </div>
+
+    <div class="cs-metrics-bar cols-4">
+      ${renderMetricBoxes(metrics)}
+    </div>
+
+    <div class="cs-body">
+      ${challenge ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">The Challenge</h2>
+        <p class="cs-section-text">${challenge}</p>
+      </div>` : ''}
+
+      ${solution ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">The Solution</h2>
+        <p class="cs-section-text">${solution}</p>
+        <div style="background:rgba(108,99,255,0.08);border-left:3px solid #6c63ff;border-radius:0 8px 8px 0;padding:14px 18px;margin-top:16px;font-size:13px;color:#d0d0e8;line-height:1.6;">
+          <strong style="color:#6c63ff;">Success Story:</strong> Our Managed Ad Campaigns enabled the client to reach more people and drove stronger engagement — without overpaying for premium placement.
+        </div>
+      </div>` : ''}
+
+      ${(before.length || after.length) ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">Before & After</h2>
+        <div class="cs-before-after">
+          <div class="cs-ba-col">
+            <div class="cs-ba-title before">✗ Before</div>
+            ${renderBAItems(before, 'before')}
+          </div>
+          <div class="cs-ba-col">
+            <div class="cs-ba-title after">✓ After</div>
+            ${renderBAItems(after, 'after')}
+          </div>
+        </div>
+      </div>` : ''}
+    </div>
+
+    ${footerHTML()}
+  </div>`;
+}
+
+function renderFB() {
+  const client = document.getElementById('fb-client').value || 'Client Name';
+  const industry = document.getElementById('fb-industry').value || '';
+  const location = document.getElementById('fb-location').value || '';
+  const duration = document.getElementById('fb-duration').value || '';
+  const challenge = document.getElementById('fb-challenge').value || '';
+  const solution = document.getElementById('fb-solution').value || '';
+  const metrics = getMetrics('fb-metrics-grid', 4);
+  const benefits = getBullets('fb-benefits-list');
+  const before = getBullets('fb-before-list');
+  const after = getBullets('fb-after-list');
+
+  return `
+  <div class="cs-page">
+    <div class="cs-header">
+      <div class="cs-header-left">
+        ${LOGO_SVG}
+        <div style="margin-top:18px;">
+          <div class="cs-tag">Facebook Leads Campaign Case Study</div>
+          <h1 class="cs-headline">How <em>${client}</em> Generated More Leads with Facebook</h1>
+        </div>
+      </div>
+      <div class="cs-header-right">
+        <div class="cs-meta-item"><div class="cs-meta-label">Client</div><div class="cs-meta-value">${client}</div></div>
+        ${industry ? `<div class="cs-meta-item"><div class="cs-meta-label">Industry</div><div class="cs-meta-value">${industry}</div></div>` : ''}
+        ${location ? `<div class="cs-meta-item"><div class="cs-meta-label">Location</div><div class="cs-meta-value">${location}</div></div>` : ''}
+        ${duration ? `<div class="cs-meta-item"><div class="cs-meta-label">Period</div><div class="cs-meta-value">${duration}</div></div>` : ''}
+      </div>
+    </div>
+
+    <div class="cs-metrics-bar cols-4">
+      ${renderMetricBoxes(metrics)}
+    </div>
+
+    <div class="cs-body">
+      ${challenge ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">Challenges</h2>
+        <p class="cs-section-text">${challenge}</p>
+      </div>` : ''}
+
+      ${solution ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">Solutions</h2>
+        <p class="cs-section-text">${solution}</p>
+      </div>` : ''}
+
+      ${benefits.length ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">Benefits</h2>
+        <ul class="cs-bullets">
+          ${benefits.map((b,i) => `<li><strong>${i+1}.</strong>&nbsp;&nbsp;${b}</li>`).join('')}
+        </ul>
+      </div>` : ''}
+
+      ${(before.length || after.length) ? `
+      <div class="cs-section">
+        <h2 class="cs-section-title">Before & After</h2>
+        <div class="cs-before-after">
+          <div class="cs-ba-col">
+            <div class="cs-ba-title before">✗ Before</div>
+            ${renderBAItems(before, 'before')}
+          </div>
+          <div class="cs-ba-col">
+            <div class="cs-ba-title after">✓ After</div>
+            ${renderBAItems(after, 'after')}
+          </div>
+        </div>
+      </div>` : ''}
+    </div>
+
+    ${footerHTML()}
+  </div>`;
+}
+
+// ===== LIVE PREVIEW =====
+function liveUpdate() {
+  if (!previewVisible) return;
+  const out = document.getElementById('cs-output');
+  if (out) out.innerHTML = renderCaseStudy(currentPanel);
+}
+
+function togglePreview() {
+  previewVisible = !previewVisible;
+  const po = document.getElementById('preview-outer');
+  if (previewVisible) {
+    po.classList.add('visible');
+    liveUpdate();
+  } else {
+    po.classList.remove('visible');
+  }
+}
+
+// ===== PDF EXPORT =====
+function exportPDF() {
+  const printTarget = document.getElementById('cs-print-target');
+  printTarget.innerHTML = renderCaseStudy(currentPanel);
+  printTarget.style.display = 'block';
+  document.querySelector('.app-wrapper').style.display = 'none';
+  window.print();
+  setTimeout(() => {
+    document.querySelector('.app-wrapper').style.display = 'flex';
+    printTarget.style.display = 'none';
+  }, 1000);
+}
+
+// ===== SAVE / LOAD DRAFTS =====
+function getDraftKey() { return 'zoek-drafts'; }
+
+function saveDraft() {
+  const drafts = JSON.parse(localStorage.getItem(getDraftKey()) || '[]');
+  const clientName = (
+    document.getElementById(currentPanel + '-client') || { value: '' }
+  ).value || 'Untitled';
+  
+  const draft = {
+    id: Date.now(),
+    type: currentPanel,
+    clientName,
+    date: new Date().toLocaleDateString(),
+    data: captureDraftData()
+  };
+  drafts.unshift(draft);
+  if (drafts.length > 20) drafts.pop();
+  localStorage.setItem(getDraftKey(), JSON.stringify(drafts));
+  updateDraftCount();
+  showToast('Draft saved!', 'success');
+}
+
+function captureDraftData() {
+  const data = { type: currentPanel, bullets: {}, kwRows, metrics: {} };
+  // capture all inputs in active panel
+  const panel = document.getElementById('panel-' + currentPanel);
+  panel.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.id) data[el.id] = el.value;
+  });
+  // bullets
+  Object.keys(bulletData).forEach(k => { data.bullets[k] = [...bulletData[k]]; });
+  // metrics
+  ['seo-metrics-grid','paid-metrics-grid','fb-metrics-grid'].forEach(g => {
+    data.metrics[g] = getMetrics(g, g.includes('seo') ? 6 : 4);
+  });
+  return data;
+}
+
+function loadDraft(id) {
+  const drafts = JSON.parse(localStorage.getItem(getDraftKey()) || '[]');
+  const draft = drafts.find(d => d.id === id);
+  if (!draft) return;
+  showPanel(draft.type);
+  setTimeout(() => {
+    const d = draft.data;
+    Object.keys(d).forEach(k => {
+      if (k === 'type' || k === 'bullets' || k === 'kwRows' || k === 'metrics') return;
+      const el = document.getElementById(k);
+      if (el) el.value = d[k];
+    });
+    if (d.bullets) {
+      Object.keys(d.bullets).forEach(k => {
+        bulletData[k] = [...d.bullets[k]];
+        const type = k.includes('before') ? 'before' : 'after';
+        renderBullets(k, type);
+      });
+    }
+    if (d.kwRows) { kwRows.splice(0, kwRows.length, ...d.kwRows); renderKwTable(); }
+    liveUpdate();
+    showToast('Draft loaded!', 'success');
+  }, 100);
+}
+
+function deleteDraft(id) {
+  let drafts = JSON.parse(localStorage.getItem(getDraftKey()) || '[]');
+  drafts = drafts.filter(d => d.id !== id);
+  localStorage.setItem(getDraftKey(), JSON.stringify(drafts));
+  updateDraftCount();
+  renderDrafts();
+}
+
+function updateDraftCount() {
+  const drafts = JSON.parse(localStorage.getItem(getDraftKey()) || '[]');
+  document.getElementById('draft-count').textContent = drafts.length;
+}
+
+function renderDrafts() {
+  const container = document.getElementById('drafts-list');
+  const drafts = JSON.parse(localStorage.getItem(getDraftKey()) || '[]');
+  if (!drafts.length) {
+    container.innerHTML = `
+      <div class="empty-drafts">
+        <div class="empty-icon">📂</div>
+        <div style="font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:8px;">No drafts yet</div>
+        <div style="color:var(--muted);font-size:14px;">Create a case study and save it as a draft to access it later.</div>
+      </div>`;
+    return;
+  }
+  const typeLabels = { seo: 'SEO', paid: 'Paid Advertising', fb: 'Facebook Leads' };
+  container.innerHTML = drafts.map(d => `
+    <div class="draft-card">
+      <div class="draft-info">
+        <h4>${d.clientName}</h4>
+        <div class="draft-meta">${typeLabels[d.type] || d.type} · Saved ${d.date}</div>
+      </div>
+      <div class="draft-actions">
+        <button class="btn btn-ghost btn-sm" onclick="loadDraft(${d.id})">📂 Load</button>
+        <button class="btn btn-danger" onclick="deleteDraft(${d.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// ===== TOAST =====
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type === 'success' ? '✓ ' : '✕ ') + msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ===== INIT BULLET DEFAULTS =====
+function initDefaults() {
+  // SEO
+  bulletData['seo-before-list'] = ['Low online visibility', 'Inconsistent lead generation', 'Limited local SEO presence', 'No page-1 keyword rankings'];
+  renderBullets('seo-before-list', 'before');
+  bulletData['seo-after-list'] = ['100% page-1 keyword coverage', 'Consistent organic traffic growth', 'Increased calls & direction requests', 'Strong AI search discoverability'];
+  renderBullets('seo-after-list', 'after');
+
+  // Paid
+  bulletData['paid-before-list'] = ['High cost per click', 'Low impressions', 'Poor ad targeting'];
+  renderBullets('paid-before-list', 'before');
+  bulletData['paid-after-list'] = ['62.8% lower CPC', '67.5% more clicks', 'Stronger community engagement'];
+  renderBullets('paid-after-list', 'after');
+
+  // FB
+  bulletData['fb-before-list'] = ['Manual lead tracking', 'Slow response to inquiries', 'High cost per lead'];
+  renderBullets('fb-before-list', 'before');
+  bulletData['fb-after-list'] = ['Real-time lead notifications', 'Faster customer response', '76% lower cost per lead'];
+  renderBullets('fb-after-list', 'after');
+  bulletData['fb-benefits-list'] = ['Single interface to view all leads from Facebook campaigns', 'Instant email alerts when a new lead submits — reducing response time and boosting satisfaction'];
+  renderBullets('fb-benefits-list', 'after');
+}
+
+// ===== BOOT =====
+initMetrics();
+initKwTable();
+initDefaults();
+updateDraftCount();
+</script>
+</body>
+</html>
